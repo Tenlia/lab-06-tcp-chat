@@ -1,0 +1,28 @@
+{
+  "name": "lab-elizabeth",
+  "version": "1.0.0",
+  "description": "lab-06-tcp-chat-server",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tenlia/lab-06-tcp-chat.git"
+  },
+  "author": "tenlia@hotmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Tenlia/lab-06-tcp-chat/issues"
+  },
+  "homepage": "https://github.com/Tenlia/lab-06-tcp-chat#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "eslint": "^3.5.0",
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^3.0.1",
+    "gulp-mocha": "^3.0.1",
+    "mocha": "^3.0.2"
+  }
+}
