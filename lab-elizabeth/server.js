@@ -66,10 +66,11 @@ server.on('connection', function(socket){
     ee.emit('default', client, data.toString());
   });
 
-  server.on('end', function(client){
-    pool.pop(client);
-    pool.forEach( c => {
-      c.socket.write(`${client.username} has left the server`);
+  socket.on('close', function(client){
+    pool.forEach(function(currentPoolClient){
+      if(currentPoolClient.id === client.id){
+        pool.splice(currentPoolClient);
+      }
     });
     console.info(`${client.username} has left the server`);
   });
