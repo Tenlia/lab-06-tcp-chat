@@ -3,21 +3,21 @@
 // node modules
 const net = require('net');
 const EE = require('events');
-
 // npm modules
 // app modules
 const Client = require('./model/client.js');
-
 // env vars
 const PORT = process.env.PORT || 3000;
-
 // module constants
 const pool = [];
 const server = net.createServer();
 const ee = new EE();
 
 ee.on('\\nick', function(client, string){
+  var oldUserName = client.username;
   client.username = string.trim();
+  client.socket.write(`username changed to ${client.username}.` + '\n');
+  console.info(`${oldUserName} has changed username to ${client.username}.` + '\n');
 });
 
 ee.on('\\all', function(client, string){
@@ -27,48 +27,54 @@ ee.on('\\all', function(client, string){
 });
 
 ee.on('\\dm', function(client, string){
-  console.log(string);
-  var target = '';
-  if(pool.contains(target)){
-    client.socket.write(`${client.username}: ` + string);
-    target.socket.write(`${client.username}: ` + string);
-  } else {
-    client.socket.write('sorry, that user does not exist');
-  }
+  pool.forEach(target => {
+    if(target.username == string.split(' ').shift().trim()){
+      client.socket.write(`${client.username}: ` + string.split(' ').slice(1).join(' '));
+      target.socket.write(`${client.username}: ` + string.split(' ').slice(1).join(' '));
+    }
+  });
 });
 
-ee.on('default', function(client, string){
-  client.socket.write('that is not a command');
+ee.on('\\who', function(client){
+  pool.forEach(currentPoolClient => {
+    client.socket.write(`${currentPoolClient.username}` + '\n');
+  });
 });
 
-/// module logic
+ee.on('default', function(client){
+  client.socket.write('that is not a command' + '\n');
+});
+
+// module logic
 server.on('connection', function(socket){
   var client = new Client(socket);
-  while(pool.contains(client.username)){
-    client.username = `guest${Math.random()}`;
-  }
+
+  pool.forEach(currentPoolClient => {
+    if(currentPoolClient.username === client.username){
+      client.username = `guest${Math.random()}`;
+    }
+  });
   pool.push(client);
+  console.info(`${client.username} has joined the server.`);
 
   socket.on('data', function(data) {
     const command = data.toString().split(' ').shift().trim();
-
     if (command.startsWith('\\')) {
       ee.emit(command, client, data.toString().split(' ').slice(1).join(' '));
       return;
     }
-
     ee.emit('default', client, data.toString());
   });
 
-  socket.on('end', function(){
+  server.on('end', function(client){
     pool.pop(client);
     pool.forEach( c => {
       c.socket.write(`${client.username} has left the server`);
     });
+    console.info(`${client.username} has left the server`);
   });
-
 });
 
 server.listen(PORT, function(){
-  console.log('server running on port', PORT);
+  console.info('server running on port', PORT);
 });
