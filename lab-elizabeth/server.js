@@ -22,7 +22,7 @@ ee.on('\\nick', function(client, string){
 
 ee.on('\\all', function(client, string){
   pool.forEach( c => {
-    c.socket.write(`${client.username}: ` + string);
+    c.socket.write(`${client.username}: ` + string + '\n');
   });
 });
 
@@ -66,14 +66,29 @@ server.on('connection', function(socket){
     ee.emit('default', client, data.toString());
   });
 
-  socket.on('close', function(client){
+  socket.on('close', function(){
     pool.forEach(function(currentPoolClient){
+      var tempUsername = client.username;
       if(currentPoolClient.id === client.id){
-        pool.splice(currentPoolClient);
+        let clientIndex = pool.indexOf(currentPoolClient);
+        pool.splice(clientIndex, clientIndex + 1);
       }
+      console.info(`${tempUsername} has left the server`);
     });
-    console.info(`${client.username} has left the server`);
   });
+
+  socket.on('error', function(){
+    pool.forEach(function(currentPoolClient){
+      var tempUsername = client.username;
+      if(currentPoolClient.id === client.id){
+        let clientIndex = pool.indexOf(currentPoolClient);
+        pool.splice(clientIndex, clientIndex + 1);
+      }
+      console.info(`${tempUsername} has had an error`);
+      console.info(`${tempUsername} has left the server`);
+    });
+  });
+
 });
 
 server.listen(PORT, function(){

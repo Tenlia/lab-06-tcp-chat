@@ -20,7 +20,7 @@ to exit the server, you simply need to hold ctrl and press C.
 
 If you wish to join a server using this documentation, you will need to type `telnet localhost <port-number>` you will need the port number from your server host in order to connect.
 
-to exit the server, you need to hold ctrl and press '[', then type 'quit' when the telnet prompt appears.
+to exit the server, you need to hold ctrl and press ']', then type 'quit' when the telnet prompt appears.
 
 ##Commands
 

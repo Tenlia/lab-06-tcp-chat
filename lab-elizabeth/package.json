@@ -24,5 +24,10 @@
     "gulp-eslint": "^3.0.1",
     "gulp-mocha": "^3.0.1",
     "mocha": "^3.0.2"
+  },
+  "dependencies": {
+    "events": "^1.1.1",
+    "net": "^1.0.2",
+    "node-uuid": "^1.4.7"
   }
 }
